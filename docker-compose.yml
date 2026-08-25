@@ -1,0 +1,18 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - heartbeat:/tmp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import os,time,sys; p=os.environ.get(\"HEARTBEAT_PATH\",\"/tmp/todoist-tg-bot.heartbeat\"); sys.exit(0 if os.path.exists(p) and time.time()-os.path.getmtime(p)<30 else 1)' "]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  heartbeat:
+
